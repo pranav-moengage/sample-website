@@ -4,7 +4,7 @@
 const axios = require('axios'); 
 // dotenv is often handled automatically by Netlify's build process, 
 // but including the config setup is a good practice if you run locally.
-require('dotenv').config({ path: '../backend/.env' }); 
+//require('dotenv').config({ path: '../backend/.env' }); 
 
 // --- MOENGAGE CONFIGURATION & SERVICE LOGIC ---
 // Netlify automatically exposes environment variables set in its UI or .env
