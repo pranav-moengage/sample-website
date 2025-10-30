@@ -130,13 +130,10 @@ import UserForm from './components/UserForm';
 import './App.css'; 
 
 function App() {
-  // Use useEffect to ensure the initialization runs only once after the component mounts
   useEffect(() => {
-    // ⚠️ IMPORTANT: Replace 'YOUR_MOENGAGE_APP_ID' with your actual App ID
-    // If you need the cluster, add cluster: 'DC_2' as shown in your snippet.
     const moengageConfig = {
       app_id: 'DNBVW45PTD67QO7I1Q7ORLZD', 
-      cluster: 'DC_01', 
+      cluster: 'DC_1', 
       useLatest: true 
     };
 
