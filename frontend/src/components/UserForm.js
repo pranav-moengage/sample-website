@@ -208,7 +208,7 @@ const UserForm = () => {
             // We use the full proxy path here, but since the React app is served
             // from the same host in production, '/api/track-lead' often works.
             // During development, ensure CORS is set up (as done in server.js).
-            const response = await fetch('https://inspiring-duckanoo-8069dc.netlify.app/api/track-lead', {
+            const response = await fetch('/.netlify/functions/track-lead', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData), 
