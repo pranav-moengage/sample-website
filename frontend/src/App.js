@@ -50,9 +50,21 @@ function App() {
     }
   }, []); // Runs once on component mount
 
-  return (
+    return (
     <div className="App">
-      {/* ... rest of the App component ... */}
+      <header className="App-header">
+        <h1>Future Dynamics Solutions</h1>
+        <p>Driving innovation and user connectivity in the digital space.</p>
+      </header>
+
+      <IntroSection />
+
+      {/* CONTACT FORM SECTION */}
+      <section className="info-section contact-us">
+        <h2>Interested? Contact Us.</h2>
+        <p className="contact-subtext">Tell us about your needs and we'll reach out to discuss how we can help you grow.</p>
+        <UserForm />
+      </section>
     </div>
   );
 }
