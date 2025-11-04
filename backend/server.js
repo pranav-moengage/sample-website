@@ -18,7 +18,7 @@ const MOE_WORKSPACE_ID = process.env.MOENGAGE_APP_ID;
 const MOE_DATA_API_KEY = process.env.MOENGAGE_API_KEY;
 // We'll use the base MoEngage Data API URL structure, as the endpoint provided 
 // is for Customer API, not the Track API. The Track API URL is simpler.
-const MOE_API_URL = 'https://api.moengage.com/v1/track'; 
+const MOE_API_URL = 'https://api-01.moengage.com/v1/customer/DNBVW45PTD67QO7I1Q7ORLZD'; 
 
 // --- CORS Configuration (CRITICAL for Render deployment) ---
 // You MUST replace 'https://your-frontend-url.onrender.com' 
