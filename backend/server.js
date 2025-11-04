@@ -205,7 +205,7 @@ async function updateMoEngageUser(email, name, phoneNumber) {
             "u_n": name,
             
             // Custom attribute
-            "Contact Phone": phoneNumber
+            "u_mb": phoneNumber
         },
     };
 
