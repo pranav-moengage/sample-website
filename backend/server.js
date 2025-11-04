@@ -172,11 +172,13 @@ async function updateMoEngageProfile(email, name, phoneNumber) {
             headers: getAuthHeader()
         });
 
-        if (response.status === 200 && response.data.status === 'SUCCESS') {
+        // 🚨 FIX: Check for lowercase 'success' status in the response data
+        if (response.status === 200 && response.data.status === 'success') {
             return { success: true, message: "MoEngage profile updated." };
         } else {
-            console.error("MoEngage Customer API response error:", response.data);
-            throw new Error(response.data.error || "Customer API call failed.");
+            // This is for other 200-level codes that are not 'success'
+            console.error("MoEngage Customer API response unexpected status:", response.data);
+            throw new Error("Customer API call returned unexpected status.");
         }
     } catch (error) {
         console.error("Error communicating with Customer API:", error.message, error.response?.data);
@@ -210,7 +212,7 @@ async function trackFormSubmissionEvent(email) {
             headers: getAuthHeader()
         });
 
-        if (response.status === 200 && response.data.status === 'SUCCESS') {
+        if (response.status === 200 && response.data.status === 'success') { // 🚨 FIX HERE TOO
             return { success: true, message: "MoEngage event tracked." };
         } else {
             console.error("MoEngage Event API response error:", response.data);
@@ -251,4 +253,4 @@ app.post('/api/track-lead', async (req, res) => {
 // Start the server
 app.listen(PORT, () => {
     console.log(`Backend server running on port ${PORT}. Ready for event tracking.`);
-});
+}); 
