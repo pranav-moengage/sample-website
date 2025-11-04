@@ -3,13 +3,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
-const cors = require('cors'); 
+const cors = require('cors');
 // dotenv is for local use; Render loads environment variables automatically
-require('dotenv').config(); 
+require('dotenv').config();
 
 // --- EXPRESS SETUP ---
 // Render provides the PORT variable; we use 5000 as a fallback for local testing
-const PORT = process.env.PORT || process.env.SERVER_PORT || 5000; 
+const PORT = process.env.PORT || process.env.SERVER_PORT || 5000;
 const app = express();
 
 // --- MOENGAGE CONFIGURATION ---
@@ -18,14 +18,14 @@ const MOE_WORKSPACE_ID = process.env.MOENGAGE_APP_ID;
 const MOE_DATA_API_KEY = process.env.MOENGAGE_API_KEY;
 // We'll use the base MoEngage Data API URL structure, as the endpoint provided 
 // is for Customer API, not the Track API. The Track API URL is simpler.
-const MOE_API_URL = 'https://api-01.moengage.com/v1/customer/DNBVW45PTD67QO7I1Q7ORLZD'; 
+const MOE_API_URL = 'https://api-01.moengage.com/v1/customer/DNBVW45PTD67QO7I1Q7ORLZD';
 
 // --- CORS Configuration (CRITICAL for Render deployment) ---
 // You MUST replace 'https://your-frontend-url.onrender.com' 
 // with the actual URL of your deployed React frontend.
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000'; 
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 const corsOptions = {
-    origin: FRONTEND_URL, 
+    origin: FRONTEND_URL,
     optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
@@ -37,19 +37,53 @@ async function trackUserActivity(email, name, phoneNumber) {
         console.error("MoEngage API keys are missing or invalid in environment.");
         throw new Error("Server config error: Missing API Keys.");
     }
-    
+
     // Base64 encoding for Basic Auth: "WorkspaceID:DataAPIKey"
     const authString = Buffer.from(`${MOE_WORKSPACE_ID}:${MOE_DATA_API_KEY}`).toString('base64');
-    
+
     // 1. Prepare MoEngage Payload (Batch Request)
+    // const payload = {
+    //     app_id: MOE_WORKSPACE_ID,
+    //     data: [
+    //         { // Payload 1: Set/Update User Attributes
+    //             type: "user",
+    //             action: "set_attribute",
+    //             attributes: [
+    //                 { name: "USER_ATTRIBUTE_UNIQUE_ID", value: email, type: "string" },
+    //                 { name: "First Name", value: name.split(' ')[0] || name, type: "string" },
+    //                 { name: "Contact Phone", value: phoneNumber, type: "string" }
+    //             ]
+    //         },
+    //         { // Payload 2: Track Event
+    //             type: "event",
+    //             action: "track_event",
+    //             attributes: [
+    //                 { name: "USER_ATTRIBUTE_UNIQUE_ID", value: email, type: "string" },
+    //                 { name: "event_name", value: 'Lead Generated', type: "string" },
+    //                 { name: "event_time", value: new Date().toISOString(), type: "date" },
+    //                 { name: "attributes", value: { 'lead_source': 'Landing Page Form', 'form_version': 1.0 }, type: "object" }
+    //             ]
+    //         }
+    //     ]
+    // };
+
     const payload = {
         app_id: MOE_WORKSPACE_ID,
         data: [
             { // Payload 1: Set/Update User Attributes
                 type: "user",
                 action: "set_attribute",
+
+                // 🚨 FIX 1: Use the system attribute "u_em" (user email) 
+                // at the root level for identification
+                u_em: email,
+
                 attributes: [
-                    { name: "USER_ATTRIBUTE_UNIQUE_ID", value: email, type: "string" },
+                    // ❌ DELETE the line where you were manually setting UNIQUE_ID
+                    // { name: "USER_ATTRIBUTE_UNIQUE_ID", value: email, type: "string" }, 
+
+                    // Use the standard MoEngage system email attribute name if needed
+                    { name: "USER_ATTRIBUTE_EMAIL", value: email, type: "string" },
                     { name: "First Name", value: name.split(' ')[0] || name, type: "string" },
                     { name: "Contact Phone", value: phoneNumber, type: "string" }
                 ]
@@ -57,8 +91,14 @@ async function trackUserActivity(email, name, phoneNumber) {
             { // Payload 2: Track Event
                 type: "event",
                 action: "track_event",
+
+                // 🚨 FIX 2: Use the system attribute "u_em" for identification
+                u_em: email,
+
                 attributes: [
-                    { name: "USER_ATTRIBUTE_UNIQUE_ID", value: email, type: "string" },
+                    // ❌ DELETE the manual setting of UNIQUE_ID from the event attributes
+                    // { name: "USER_ATTRIBUTE_UNIQUE_ID", value: email, type: "string" }, 
+
                     { name: "event_name", value: 'Lead Generated', type: "string" },
                     { name: "event_time", value: new Date().toISOString(), type: "date" },
                     { name: "attributes", value: { 'lead_source': 'Landing Page Form', 'form_version': 1.0 }, type: "object" }
@@ -95,15 +135,15 @@ app.get('/', (req, res) => {
 
 // --- EXPRESS ROUTE ---
 app.post('/api/track-lead', async (req, res) => {
-    const { name, email, phoneNumber } = req.body; 
-    
+    const { name, email, phoneNumber } = req.body;
+
     // Basic validation
     if (!email || !name || !phoneNumber) {
         return res.status(400).json({ error: 'Missing required form fields.' });
     }
-    
+
     try {
-        await trackUserActivity(email, name, phoneNumber); 
+        await trackUserActivity(email, name, phoneNumber);
         res.status(200).json({ message: 'Lead tracked successfully.' });
     } catch (error) {
         // Return a generic error to the frontend, but log the specific details
