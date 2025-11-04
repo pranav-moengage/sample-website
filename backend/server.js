@@ -73,20 +73,23 @@ async function trackUserActivity(email, name, phoneNumber) {
             { // Payload 1: Set/Update User Attributes
                 type: "user",
                 action: "set_attribute",
-                u_em: email, // <-- REQUIRED IDENTIFIER AT ROOT LEVEL
+
+                // 🚨 FIX: Use 'u_em' (Email) as the standard attribute name for identification
                 attributes: [
-                    // ⚠️ Ensure USER_ATTRIBUTE_UNIQUE_ID is NOT HERE. u_em replaces it.
-                    { name: "USER_ATTRIBUTE_EMAIL", value: email, type: "string" },
-                    { name: "First Name", value: name.split(' ')[0] || name, type: "string" },
-                    { name: "Contact Phone", value: phoneNumber, type: "string" }
+                    { name: "u_em", value: email, type: "string" }, // Key must be u_em
+                    { name: "u_fn", value: name.split(' ')[0] || name, type: "string" }, // First Name (Standard key from image)
+                    { name: "u_n", value: name, type: "string" }, // Full Name (Standard key from image)
+                    { name: "Contact Phone", value: phoneNumber, type: "string" } // Custom attribute
                 ]
             },
             { // Payload 2: Track Event
                 type: "event",
                 action: "track_event",
-                u_em: email, // <-- REQUIRED IDENTIFIER AT ROOT LEVEL
+
+                // 🚨 FIX: Pass the identifier (u_em) along with the event
+                u_em: email, // Associate the event with this user email
+
                 attributes: [
-                    // ⚠️ Ensure USER_ATTRIBUTE_UNIQUE_ID is NOT HERE.
                     { name: "event_name", value: 'Lead Generated', type: "string" },
                     { name: "event_time", value: new Date().toISOString(), type: "date" },
                     { name: "attributes", value: { 'lead_source': 'Landing Page Form', 'form_version': 1.0 }, type: "object" }
