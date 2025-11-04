@@ -73,16 +73,9 @@ async function trackUserActivity(email, name, phoneNumber) {
             { // Payload 1: Set/Update User Attributes
                 type: "user",
                 action: "set_attribute",
-
-                // 🚨 FIX 1: Use the system attribute "u_em" (user email) 
-                // at the root level for identification
-                u_em: email,
-
+                u_em: email, // <-- REQUIRED IDENTIFIER AT ROOT LEVEL
                 attributes: [
-                    // ❌ DELETE the line where you were manually setting UNIQUE_ID
-                    // { name: "USER_ATTRIBUTE_UNIQUE_ID", value: email, type: "string" }, 
-
-                    // Use the standard MoEngage system email attribute name if needed
+                    // ⚠️ Ensure USER_ATTRIBUTE_UNIQUE_ID is NOT HERE. u_em replaces it.
                     { name: "USER_ATTRIBUTE_EMAIL", value: email, type: "string" },
                     { name: "First Name", value: name.split(' ')[0] || name, type: "string" },
                     { name: "Contact Phone", value: phoneNumber, type: "string" }
@@ -91,14 +84,9 @@ async function trackUserActivity(email, name, phoneNumber) {
             { // Payload 2: Track Event
                 type: "event",
                 action: "track_event",
-
-                // 🚨 FIX 2: Use the system attribute "u_em" for identification
-                u_em: email,
-
+                u_em: email, // <-- REQUIRED IDENTIFIER AT ROOT LEVEL
                 attributes: [
-                    // ❌ DELETE the manual setting of UNIQUE_ID from the event attributes
-                    // { name: "USER_ATTRIBUTE_UNIQUE_ID", value: email, type: "string" }, 
-
+                    // ⚠️ Ensure USER_ATTRIBUTE_UNIQUE_ID is NOT HERE.
                     { name: "event_name", value: 'Lead Generated', type: "string" },
                     { name: "event_time", value: new Date().toISOString(), type: "date" },
                     { name: "attributes", value: { 'lead_source': 'Landing Page Form', 'form_version': 1.0 }, type: "object" }
