@@ -317,7 +317,7 @@ const UserForm = () => {
 
     // --- CRITICAL UPDATE ---
     // ⚠️ Replace this placeholder with the actual URL of your deployed Render Web Service
-    const BACKEND_URL = "https://sample-website-backend.onrender.com/"; 
+    const BACKEND_URL = "https://sample-website-backend.onrender.com"; 
     // If testing locally (both frontend and backend running):
     // const BACKEND_URL = "http://localhost:5000"; 
     
