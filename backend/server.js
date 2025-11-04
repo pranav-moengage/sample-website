@@ -74,20 +74,22 @@ async function trackUserActivity(email, name, phoneNumber) {
                 type: "user",
                 action: "set_attribute",
 
-                // 🚨 FIX: Use 'u_em' (Email) as the standard attribute name for identification
+                // 🚨 FIX 1: Place the identifier (u_em) directly at the root level of the user object
+                u_em: email,
+
                 attributes: [
-                    { name: "u_em", value: email, type: "string" }, // Key must be u_em
-                    { name: "u_fn", value: name.split(' ')[0] || name, type: "string" }, // First Name (Standard key from image)
-                    { name: "u_n", value: name, type: "string" }, // Full Name (Standard key from image)
-                    { name: "Contact Phone", value: phoneNumber, type: "string" } // Custom attribute
+                    { name: "u_em", value: email, type: "string" },
+                    { name: "u_fn", value: name.split(' ')[0] || name, type: "string" },
+                    { name: "u_n", value: name, type: "string" },
+                    { name: "Contact Phone", value: phoneNumber, type: "string" }
                 ]
             },
             { // Payload 2: Track Event
                 type: "event",
                 action: "track_event",
 
-                // 🚨 FIX: Pass the identifier (u_em) along with the event
-                u_em: email, // Associate the event with this user email
+                // 🚨 FIX 2: Place the identifier (u_em) directly at the root level of the event object
+                u_em: email,
 
                 attributes: [
                     { name: "event_name", value: 'Lead Generated', type: "string" },
