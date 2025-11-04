@@ -88,6 +88,11 @@ async function trackUserActivity(email, name, phoneNumber) {
     }
 }
 
+
+app.get('/', (req, res) => {
+    res.status(200).send('MoEngage Tracker API is running!');
+});
+
 // --- EXPRESS ROUTE ---
 app.post('/api/track-lead', async (req, res) => {
     const { name, email, phoneNumber } = req.body; 
