@@ -73,7 +73,7 @@ const InboxContainer = () => {
             
             const CATEGORY_NAME = 'Product Updates';
             const result = moengage.cards.getCardsForCategory(CATEGORY_NAME);
-            })
+            
             if (result && result.cards && Array.isArray(result.cards)) {
 
                 const allCards = result.cards
@@ -105,7 +105,7 @@ const InboxContainer = () => {
                 setCardData([]);
             }
 
-
+            })
         } catch (error) {
             console.error("Error fetching MoEngage Cards:", error);
             setCardData([{ id: 'error', title: 'Error loading inbox.', message: 'Check console for details.' }]);
