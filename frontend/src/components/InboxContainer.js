@@ -57,6 +57,7 @@ const InboxContainer = () => {
     const [loading, setLoading] = useState(false);
 
     // --- 1. Function to Fetch Cards ---
+    
     const fetchAndDisplayCards = async () => {
         if (!moengage || !moengage.cards) {
             console.error("MoEngage Cards module not ready.");
@@ -65,13 +66,13 @@ const InboxContainer = () => {
 
         setLoading(true);
         setCardData([]); // Clear previous data
-        
+    
         
         try {
-            moengage.on_cards_loaded().then(function() {
+            moengage.cards.isInboxOpen();
             const CATEGORY_NAME = 'Product Updates';
-            const result = moengage.cards.getCardsForCategory(CATEGORY_NAME); 
-            	})
+            const result = moengage.cards.getCardsForCategory(CATEGORY_NAME);
+            	
             if (result && result.cards && Array.isArray(result.cards)) {
 
                 const allCards = result.cards
