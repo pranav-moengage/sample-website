@@ -16,7 +16,7 @@
 
 //     return (
 //         <div className="inbox-main-wrapper">
-            
+
 //             {/* 1. The Inbox Button (The Trigger/Placeholder) */}
 //             <button 
 //                 onClick={toggleInbox} 
@@ -41,7 +41,7 @@
 //                     </div>
 //                 </div>
 //             )}
-            
+
 //         </div>
 //     );
 // };
@@ -55,7 +55,7 @@ const InboxContainer = () => {
     const [isInboxOpen, setIsInboxOpen] = useState(false);
     const [cardData, setCardData] = useState([]);
     const [loading, setLoading] = useState(false);
-    
+
     // --- 1. Function to Fetch Cards ---
     const fetchAndDisplayCards = async () => {
         if (!moengage || !moengage.cards) {
@@ -65,30 +65,33 @@ const InboxContainer = () => {
 
         setLoading(true);
         setCardData([]); // Clear previous data
-        
+
         try {
             // Use fetchCards() to force a fresh sync (better for up-to-date content)
             // Note: This API call may be throttled to 5 minutes between calls.
-            const result = await moengage.cards.fetchCards('Product Updates'); 
-            
+            const result = await moengage.cards.fetchCards('Product Updates');
+
             // The result structure contains categories and cards
             if (result && result.cardsInfo && Array.isArray(result.cardsInfo)) {
-                
+
                 // Process the cards to pull out the content you need
-                const allCards = result.cardsInfo.flatMap(category => 
-                    category.cards.map(card => ({
-                        id: card.id,
-                        title: card.data?.title, // Access the card content payload
-                        message: card.data?.message,
-                        imageUrl: card.data?.imageUrl // Example content fields
-                        // You will need to map these fields based on your campaign payload
-                    }))
+                const allCards = result.cardsInfo.flatMap(category =>
+                    category.cards
+                        .filter(card => card.data && card.data.Header && card.data.Message) // Filter out incomplete cards
+                        .map(card => ({
+                            id: card.id,
+                            // 🚨 FIX: Map the fields directly from the MoEngage template keys
+                            title: card.data.Header,
+                            message: card.data.Message,
+                            // You can also track the unique campaign name if available
+                            campaignName: card.data.campaignName
+                        }))
                 );
-                
+
                 setCardData(allCards);
             } else {
-                 console.log("MoEngage Cards: No card data received.");
-                 setCardData([]);
+                console.log("MoEngage Cards: No card data received.");
+                setCardData([]);
             }
 
         } catch (error) {
@@ -98,33 +101,33 @@ const InboxContainer = () => {
             setLoading(false);
         }
     };
-    
+
     // --- 2. Toggle Handler ---
     const toggleInbox = () => {
         const newState = !isInboxOpen;
         setIsInboxOpen(newState);
-        
+
         if (newState) {
             // 🚨 Action: Fetch cards immediately when the inbox opens
             fetchAndDisplayCards();
-            
+
             // 💡 Optional: Notify SDK the inbox section is viewed for analytics
             // moengage.cards.onCardsSectionLoaded(); 
         } else {
-             // 💡 Optional: Notify SDK the inbox section is closed
-             // moengage.cards.onCardSectionUnLoaded(); 
+            // 💡 Optional: Notify SDK the inbox section is closed
+            // moengage.cards.onCardSectionUnLoaded(); 
         }
     };
 
     // --- 3. Render Component ---
     return (
         <div className="inbox-main-wrapper">
-            <button 
-                onClick={toggleInbox} 
+            <button
+                onClick={toggleInbox}
                 className="inbox-button"
                 aria-expanded={isInboxOpen}
             >
-                📬 Inbox ({cardData.length}) 
+                📬 Inbox ({cardData.length})
             </button>
 
             {isInboxOpen && (
@@ -132,11 +135,11 @@ const InboxContainer = () => {
                     <h3>Your Notifications</h3>
                     <div className="card-list-area">
                         {loading && <p>Loading cards...</p>}
-                        
+
                         {!loading && cardData.length === 0 && (
                             <p>No new messages available.</p>
                         )}
-                        
+
                         {!loading && cardData.map(card => (
                             <div key={card.id} className="moengage-card">
                                 <h4>{card.title}</h4>
@@ -147,7 +150,7 @@ const InboxContainer = () => {
                     </div>
                 </div>
             )}
-            
+
         </div>
     );
 };
