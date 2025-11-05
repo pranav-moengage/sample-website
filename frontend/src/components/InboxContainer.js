@@ -35,7 +35,7 @@ const InboxContainer = () => {
                       For now, it's a simple placeholder message.
                     */}
                     <h3>Your Notifications</h3>
-                    <p>Card list goes here (Implementation using MoEngage SDK).</p>
+                    {/* <p>Card list goes here (Implementation using MoEngage SDK).</p> */}
                     <div className="card-list-area">
                         {/* MoEngage Cards will render inside this list area */}
                     </div>
