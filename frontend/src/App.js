@@ -44,10 +44,23 @@ function App() {
       cluster: 'DC_1',
       useLatest: true,
       cards: {
-        enable: true, 
+        enable: true,
         // placeholder: '#inbox-button',
       }
     };
+
+    moengage.onsite.registerCallback(tagName, function (err, data) {
+      if (err) {
+        // Handle error case here
+        // We could get error for various reasons, like
+        // network issues, campaigns not present for a particular tag
+        return console.error('Error from moengage:', err);
+      }
+      console.log('Data for campaign:', data);
+      var payload = data.payload; // Campaign payload defined during campaign creation
+      var impTracker = data.imp; // Function, you can call impTracker() to send impression stats for a campaign back to MoEngage. Call this after you have successfully rendered the HTML as per the payload provided.
+      var clickTracker = data.click({ widget_id: "sample_widget_id" }); // Function, you can call clickTracker() to send click stats for a campaign back to MoEngage. Call this when the user clicks on the desired section of the website. Passing widget_id is not mandatory and should only be used in case you want to differentiate the clicks between 2 different widgets of the Web Personalization Campaign.
+    });
 
     if (moengage) {
       moengage.initialize(moengageConfig);
@@ -57,7 +70,7 @@ function App() {
 
   return (
     <div className="App">
-        <InboxContainer/>
+      <InboxContainer />
       <header className="App-header">
         <h1>Future Dynamics Solutions</h1>
         <p>Driving innovation and user connectivity in the digital space.</p>
