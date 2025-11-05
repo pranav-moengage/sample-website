@@ -70,10 +70,10 @@ const InboxContainer = () => {
         
         try {
             moengage.on_cards_loaded().then(function() {
-            setTimeout(() => {
+           
             //const CATEGORY_NAME = 'Product Updates';
-            const result = moengage.cards.getCardsForCategory('Product Updates');},5000)
-            
+            const result = moengage.cards.getCardsForCategory('Product Updates');
+             setTimeout(() => {
             if (result && result.cards && Array.isArray(result.cards)) {
 
                 const allCards = result.cards
@@ -100,11 +100,12 @@ const InboxContainer = () => {
                     });
 
                 setCardData(allCards);
+                
             } else {
                 console.log("MoEngage Cards: No card data received.");
                 setCardData([]);
             }
-
+                    },5000)
             })
         } catch (error) {
             console.error("Error fetching MoEngage Cards:", error);
