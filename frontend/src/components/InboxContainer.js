@@ -69,10 +69,11 @@ const InboxContainer = () => {
     
         
         try {
+            moengage.on_cards_loaded().then(function() {
             moengage.cards.isInboxOpen();
             const CATEGORY_NAME = 'Product Updates';
             const result = moengage.cards.getCardsForCategory(CATEGORY_NAME);
-            	
+            })
             if (result && result.cards && Array.isArray(result.cards)) {
 
                 const allCards = result.cards
