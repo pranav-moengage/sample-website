@@ -30,9 +30,9 @@
 
 import React, { useEffect } from 'react'; // 👈 Re-import useEffect
 import moengage from "@moengage/web-sdk"; // 👈 Re-import moengage
-import IntroSection from './components/IntroSection'; 
-import UserForm from './components/UserForm'; 
-import './App.css'; 
+import IntroSection from './components/IntroSection';
+import UserForm from './components/UserForm';
+import './App.css';
 
 function App() {
   useEffect(() => {
@@ -40,17 +40,20 @@ function App() {
     // This value is publicly exposed and does not need to be hidden.
     const moengageConfig = {
       app_id: 'DNBVW45PTD67QO7I1Q7ORLZD', // Your actual Workspace ID
-      cluster: 'DC_1', 
-      useLatest: true 
+      cluster: 'DC_1',
+      useLatest: true,
+      cards: {
+        enable: true,
+      }
     };
 
     if (moengage) {
-        moengage.initialize(moengageConfig);
-        console.log("MoEngage Web SDK Initialized.");
+      moengage.initialize(moengageConfig);
+      console.log("MoEngage Web SDK Initialized.");
     }
   }, []); // Runs once on component mount
 
-    return (
+  return (
     <div className="App">
       <header className="App-header">
         <h1>Future Dynamics Solutions</h1>
