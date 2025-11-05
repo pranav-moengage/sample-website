@@ -45,6 +45,7 @@ function App() {
       useLatest: true,
       cards: {
         enable: true,
+        placeholder: InboxContainer,
       }
     };
 
