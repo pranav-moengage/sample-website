@@ -45,7 +45,7 @@ function App() {
       useLatest: true,
       cards: {
         enable: true,
-        placeholder: '#inbox-button',
+        // placeholder: '#inbox-button',
       }
     };
 
