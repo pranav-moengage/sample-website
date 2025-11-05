@@ -202,3 +202,33 @@ button[type="submit"]:hover, .thank-you-message button:hover {
     border: 1px solid #b8daff;
     text-align: center;
 }
+
+.inbox-main-wrapper {
+    position: fixed; /* Fixes it to the screen */
+    top: 20px;
+    right: 20px;
+    z-index: 1000; /* Ensures it is on top of other content */
+}
+
+.inbox-button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.moengage-inbox-placeholder {
+    position: absolute;
+    top: 50px; /* Position below the button */
+    right: 0;
+    width: 300px;
+    max-height: 400px;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    z-index: 1001;
+    overflow-y: auto;
+}

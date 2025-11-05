@@ -32,6 +32,7 @@ import React, { useEffect } from 'react'; // 👈 Re-import useEffect
 import moengage from "@moengage/web-sdk"; // 👈 Re-import moengage
 import IntroSection from './components/IntroSection';
 import UserForm from './components/UserForm';
+import InboxContainer from './components/InboxContainer';
 import './App.css';
 
 function App() {
@@ -55,6 +56,7 @@ function App() {
 
   return (
     <div className="App">
+        <InboxContainer/>
       <header className="App-header">
         <h1>Future Dynamics Solutions</h1>
         <p>Driving innovation and user connectivity in the digital space.</p>
