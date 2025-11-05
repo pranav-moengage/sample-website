@@ -70,9 +70,9 @@ const InboxContainer = () => {
         
         try {
             moengage.on_cards_loaded().then(function() {
-            
+            setTimeout(() => {
             //const CATEGORY_NAME = 'Product Updates';
-            const result = moengage.cards.getCardsForCategory('Product Updates');
+            const result = moengage.cards.getCardsForCategory('Product Updates');},5000)
             
             if (result && result.cards && Array.isArray(result.cards)) {
 
