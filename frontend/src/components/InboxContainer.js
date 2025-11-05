@@ -67,26 +67,33 @@ const InboxContainer = () => {
         setCardData([]); // Clear previous data
 
         try {
-            // Use fetchCards() to force a fresh sync (better for up-to-date content)
-            // Note: This API call may be throttled to 5 minutes between calls.
-            const result = await moengage.cards.getCardsForCategory('Product Updates');
+            const CATEGORY_NAME = 'Product Updates';
+            const result = moengage.cards.getCardsForCategory(CATEGORY_NAME);
 
-            // The result structure contains categories and cards
-            if (result && result.cardsInfo && Array.isArray(result.cardsInfo)) {
+            if (result && result.cards && Array.isArray(result.cards)) {
 
-                // Process the cards to pull out the content you need
-                const allCards = result.cardsInfo.flatMap(category =>
-                    category.cards
-                        .filter(card => card.data && card.data.Header && card.data.Message) // Filter out incomplete cards
-                        .map(card => ({
+                const allCards = result.cards
+                    // 🚨 Filter to ensure the essential parts of the template data exist
+                    .filter(card =>
+                        card.templateData &&
+                        card.templateData.containers &&
+                        card.templateData.containers[0]
+                    )
+                    .map(card => {
+                        const widgets = card.templateData.containers[0].widgets;
+
+                        // 🚨 FIX: Map the content based on the widgets array index
+                        const headerWidget = widgets.find(w => w.id === 1 && w.type === 'text') || widgets[0];
+                        const messageWidget = widgets.find(w => w.id === 2 && w.type === 'text') || widgets[1];
+
+                        return {
                             id: card.id,
-                            // 🚨 FIX: Map the fields directly from the MoEngage template keys
-                            title: card.data.Header,
-                            message: card.data.Message,
-                            // You can also track the unique campaign name if available
-                            campaignName: card.data.campaignName
-                        }))
-                );
+                            // Extract content from the specific widget structure
+                            title: headerWidget?.content.replace(/<\/?div>/g, '') || 'No Header', // Stripping <div> tags
+                            message: messageWidget?.content.replace(/<\/?div>/g, '') || 'No Message', // Stripping <div> tags
+                            rawCard: card // Keep the full object for debugging
+                        };
+                    });
 
                 setCardData(allCards);
             } else {
