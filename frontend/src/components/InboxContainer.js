@@ -65,11 +65,13 @@ const InboxContainer = () => {
 
         setLoading(true);
         setCardData([]); // Clear previous data
-
+        
+        
         try {
+            moengage.on_cards_loaded().then(function() {
             const CATEGORY_NAME = 'Product Updates';
-            const result = moengage.cards.getCardsForCategory(CATEGORY_NAME);
-
+            const result = moengage.cards.getCardsForCategory(CATEGORY_NAME); 
+            	})
             if (result && result.cards && Array.isArray(result.cards)) {
 
                 const allCards = result.cards
@@ -101,13 +103,14 @@ const InboxContainer = () => {
                 setCardData([]);
             }
 
+
         } catch (error) {
             console.error("Error fetching MoEngage Cards:", error);
             setCardData([{ id: 'error', title: 'Error loading inbox.', message: 'Check console for details.' }]);
         } finally {
             setLoading(false);
         }
-    };
+    }; 
 
     // --- 2. Toggle Handler ---
     const toggleInbox = () => {
