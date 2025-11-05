@@ -44,7 +44,7 @@ function App() {
       cluster: 'DC_1',
       useLatest: true,
       cards: {
-        enable: true,
+        enable: true, 
         // placeholder: '#inbox-button',
       }
     };

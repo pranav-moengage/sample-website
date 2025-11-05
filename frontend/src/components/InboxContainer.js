@@ -69,7 +69,7 @@ const InboxContainer = () => {
         try {
             // Use fetchCards() to force a fresh sync (better for up-to-date content)
             // Note: This API call may be throttled to 5 minutes between calls.
-            const result = await moengage.cards.fetchCards('Product Updates');
+            const result = await Moengage.cards.fetchCards('Product Updates');
 
             // The result structure contains categories and cards
             if (result && result.cardsInfo && Array.isArray(result.cardsInfo)) {
