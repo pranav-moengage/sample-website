@@ -323,7 +323,7 @@ const InboxContainer = () => {
         
         try {
             // 1. Force a server refresh (Data sync)
-            await moengage.cards.fetchCards();
+            //await moengage.cards.fetchCards();
             
             // 2. Retrieve data from local cache (Promise-based call)
             const result = await moengage.cards.getCardsForCategory(CATEGORY_NAME); 
