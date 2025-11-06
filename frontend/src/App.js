@@ -114,7 +114,7 @@ function App() {
       console.log("MoEngage Web SDK Initialized.");
       
       // 2. Global readiness check (Optional but good practice)
-      moengage.onReady(function() {
+      moengage.on_cards_loaded(function() {
         console.log("MoEngage Core SDK and Modules are ready for general use.");
       });
     }
