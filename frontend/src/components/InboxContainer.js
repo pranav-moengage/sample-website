@@ -57,7 +57,7 @@
 //     const [loading, setLoading] = useState(false);
 
 //     // --- 1. Function to Fetch Cards ---
-    
+
 //     const fetchAndDisplayCards = async () => {
 //         if (!moengage || !moengage.cards) {
 //             console.error("MoEngage Cards module not ready.");
@@ -66,14 +66,14 @@
 
 //         setLoading(true);
 //         setCardData([]); // Clear previous data
-    
-        
+
+
 //         try {
 //             moengage.on_cards_loaded().then(function() {
-           
+
 //             //const CATEGORY_NAME = 'Product Updates';
 //             const result = moengage.cards.getCardsForCategory('Product Updates').then(function(cards){
-             
+
 //             if (result && result.cards && Array.isArray(result.cards)) {
 
 //                 const allCards = result.cards
@@ -100,7 +100,7 @@
 //                     });
 
 //                 setCardData(allCards);
-                
+
 //             } else {
 //                 console.log("MoEngage Cards: No card data received.");
 //                 setCardData([]);
@@ -171,7 +171,7 @@
 // export default InboxContainer;
 
 import React, { useState } from 'react'; // Removed unused useEffect
-import moengage from "@moengage/web-sdk"; 
+import moengage from "@moengage/web-sdk";
 // Note: Assuming moengage.cards.getCardsForCategory() is correctly recognized as async/Promise-returning.
 
 const InboxContainer = () => {
@@ -181,38 +181,52 @@ const InboxContainer = () => {
 
     // --- 1. Function to Fetch Cards ---
     const fetchAndDisplayCards = async () => {
-        if (!moengage || !moengage.cards) {
+        if (!moengage || !moengage.cards || typeof moengage.cards.getCardsForCategory !== 'function') {
             console.error("MoEngage Cards module not ready.");
+            setLoading(false);
             return;
         }
 
         setLoading(true);
-        setCardData([]); 
-        
+        setCardData([]);
+        const CATEGORY_NAME = 'Product Updates';
+
         try {
-            // 🚨 FIX 1: Await the cards loaded event to ensure readiness
+            // 1. Await Cards Loaded Event (Ensures module is ready)
+            // Note: moengage.on_cards_loaded() returns a Promise. We need to await it.
             await moengage.on_cards_loaded();
-            
-            const CATEGORY_NAME = 'Product Updates';
-            
-            // 🚨 FIX 2: Await the card fetching function directly
-            // We expect this to return a result object containing the cards array.
+
+            // 2. 🚨 FIX: Force a server refresh using fetchCards() (Image 2/8)
+            // This is necessary to pull fresh data from the server into the client's cache.
+            // Since the documentation shows fetchCards() returns a Promise, we await it.
+            await moengage.cards.fetchCards();
+
+            // 3. 🚨 FIX: Use the correct asynchronous retrieval method (Image 4/8)
+            // getCardsForCategory returns a Promise (as shown in documentation).
             const result = await moengage.cards.getCardsForCategory(CATEGORY_NAME);
-            
-            // 🚨 FIX 3: Check the received result object structure
+
+            // 4. Notify MoEngage the inbox is open (Image 7/8)
+            moengage.cards.inboxOpened();
+
+            // --- Data Processing ---
+            // We now expect the result to be the object containing the cards array.
             if (result && result.cards && Array.isArray(result.cards)) {
-                
+
                 const allCards = result.cards
-                    // Filter and map logic remains the same (it was correct for mapping the data)
+                    // Filter and map logic remains the same...
                     .filter(card =>
                         card.templateData &&
                         card.templateData.containers &&
                         card.templateData.containers[0]
                     )
                     .map(card => {
+                        // ... (data mapping logic from previous step)
                         const widgets = card.templateData.containers[0].widgets;
                         const headerWidget = widgets.find(w => w.id === 1 && w.type === 'text') || widgets[0];
                         const messageWidget = widgets.find(w => w.id === 2 && w.type === 'text') || widgets[1];
+
+                        // 🚨 FIX: Track Impression Stat (Important for MoEngage analytics!)
+                        moengage.cards.cardShown(card.id);
 
                         return {
                             id: card.id,
@@ -223,19 +237,18 @@ const InboxContainer = () => {
                     });
 
                 setCardData(allCards);
+
             } else {
-                // This path executes if MoEngage returns an empty object or no 'cards' array.
-                console.log("MoEngage Cards: No active card data received for category.");
+                console.log("MoEngage Cards: No active card data received (Server returned no eligible cards).");
                 setCardData([]);
             }
         } catch (error) {
             console.error("Error fetching MoEngage Cards:", error);
             setCardData([{ id: 'error', title: 'Error loading inbox.', message: 'Check console for details.' }]);
         } finally {
-            // 🚨 FIX 4: Ensure loading state is set to false after ALL async work.
             setLoading(false);
         }
-    }; 
+    };
 
     // --- 2. Toggle Handler (remains the same) ---
     const toggleInbox = () => {
