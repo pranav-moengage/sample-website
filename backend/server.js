@@ -254,6 +254,7 @@
 // app.listen(PORT, () => {
 //     console.log(`Backend server running on port ${PORT}. Ready for event tracking.`);
 // }); const express = require('express');
+const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const cors = require('cors'); 
